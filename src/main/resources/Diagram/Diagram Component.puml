@@ -1,0 +1,26 @@
+@startuml
+
+
+package "Application" {
+  [security]  <-> [rest]
+  [security]  <..> () "repository"
+    [rest] <-> () "service"
+    () "service" <-> [ServiceImpl]
+    [ServiceImpl] <-> () "repository"
+    [exceptions] -up->[ServiceImpl]
+    () "repository" <--> [model]
+[model] -down->H2
+}
+() "http" <--> [security]
+
+
+
+
+database "H2" {
+
+}
+
+
+
+
+@enduml

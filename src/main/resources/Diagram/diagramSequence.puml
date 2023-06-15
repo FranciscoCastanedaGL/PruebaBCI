@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor Petitions #red
+
+box BciTest Rest Api(Spring Boot)
+ participant Authentication
+
+ Petitions  -> UserRestController: Post /sign-up
+  UserRestController  -[#0000FF]-> Petitions : Return Msg (token) or Exception
+ UserRestController -> UserServiceImpl:createUser()
+ UserServiceImpl  -[#0000FF]-> UserRestController : Return User or Exception
+ UserServiceImpl -> UserRepository:createUser()
+UserRepository -[#0000FF]-> UserServiceImpl: Return User
+
+
+end box
+UserRepository -> DB: Save()
+DB -[#0000FF]->UserRepository : Resolve Save
+
+Petitions -> Authentication : Post /login
+Authentication -[#0000FF]->Petitions : Error 401  (Unauthorized)
+Petitions -> Authentication : Post /login  (header +token and ResponseBody)
+Authentication ->UserRestController : login ()
+ UserRestController -> UserServiceImpl:sigIn()
+  UserRestController  -[#0000FF]-> Petitions : Return Msg (ResponseUserDTO) or Exception
+ UserServiceImpl  -[#0000FF]-> UserRestController : Return ResponseUserDTO or Exception
+ UserServiceImpl -> UserRepository:sigIn()
+ UserRepository -[#0000FF]-> UserServiceImpl: Return ResponseUserDTO
+ UserRepository -> DB: findUserByEmailAndPassword()
+ DB -[#0000FF]->UserRepository : resolve search
+
+
+@enduml
