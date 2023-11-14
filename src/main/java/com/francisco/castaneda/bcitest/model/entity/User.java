@@ -15,6 +15,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class User {
     @Id
+    @Column(name = "user_id")
     private String id;
     private String name;
     private String email;
@@ -25,8 +26,9 @@ public class User {
     private Timestamp created;
     @JsonIgnore
     private Boolean isAdmin ;
-    @OneToMany(cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private List<Phone> phones;
 
     public User (String username, String password) {

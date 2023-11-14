@@ -1,16 +1,17 @@
-package com.francisco.castaneda.bcitest.service.serviceImpl;
+package com.francisco.castaneda.bcitest.service.serviceimpl;
 
 import com.francisco.castaneda.bcitest.exceptions.CustomException;
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
 import com.francisco.castaneda.bcitest.model.constants.CustomConstants;
-import com.francisco.castaneda.bcitest.repository.UserRepository;
-import com.francisco.castaneda.bcitest.security.JWTRepository;
-import com.francisco.castaneda.bcitest.security.SecurityConstants;
 import com.francisco.castaneda.bcitest.model.dto.InfoUserTokenDTO;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
 import com.francisco.castaneda.bcitest.model.dto.UserDTO;
 import com.francisco.castaneda.bcitest.model.entity.User;
+import com.francisco.castaneda.bcitest.repository.UserRepository;
+import com.francisco.castaneda.bcitest.security.JWTRepository;
+import com.francisco.castaneda.bcitest.security.SecurityConstants;
 import com.francisco.castaneda.bcitest.service.UserService;
+import com.francisco.castaneda.bcitest.utils.JasyptUtil;
 import com.francisco.castaneda.bcitest.utils.Validations;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.MapperFacade;
@@ -18,14 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Objects;
-import java.util.Optional;
 
-import static com.francisco.castaneda.bcitest.utils.JasyptUtil.decyptPwd;
 import static com.francisco.castaneda.bcitest.utils.JasyptUtil.encyptPwd;
 
 @Service
@@ -33,28 +31,31 @@ import static com.francisco.castaneda.bcitest.utils.JasyptUtil.encyptPwd;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private  final JWTRepository jwtRepository;
     private final MapperFacade orikaMapper;
 
     @Override
     public InfoUserTokenDTO createUser(User newUser) throws CustomException {
-        String uuid = java.util.UUID.randomUUID().toString();
-        newUser.setId(uuid);
-        String jwt =this.jwtRepository.create(newUser.getEmail());
 
         if (!Validations.emailValidation(newUser.getEmail())){
-              throw new ValidationsException("No se puede validar el mail","No cumple",HttpStatus.NOT_ACCEPTABLE);}
-        if(!Validations.paswordValidation(newUser.getPassword())){
-            throw new ValidationsException("La Password No cumple con los Standares de Aceptacion","No cumple",HttpStatus.NOT_ACCEPTABLE);}
+              throw new ValidationsException("The email cannot be validated.","No cumple",HttpStatus.NOT_ACCEPTABLE);}
+        if(!Validations.passwordValidation(newUser.getPassword())){
+            throw new ValidationsException("The password does not meet the acceptance standards.","No cumple",HttpStatus.NOT_ACCEPTABLE);}
+        //Se asigna el UUID
+        String uuid = java.util.UUID.randomUUID().toString();
+        //Se crea el token
+        String jwt =this.jwtRepository.create(newUser.getEmail());
+        //se obtiene la autenticación
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        newUser.setId(uuid);
         newUser.setPassword(encyptPwd(CustomConstants.SEED_ENCRYPTION,newUser.getPassword()));
         newUser.setIsActive(true);
-        newUser.setToken(SecurityConstants.TOKEN_PREFIX+jwt);
+        newUser.setToken(SecurityConstants.TOKEN_PREFIX.concat(jwt));
         newUser.setIsAdmin(auth.isAuthenticated());
         newUser.setCreated(new Timestamp(System.currentTimeMillis()));
         User optionalUser =  this.userRepository.findUserByEmailAndIsActive(newUser.getEmail(),newUser.getIsActive()).orElse(null);
+        //Se valida si existe el mail
          if (Objects.isNull(optionalUser)){
             this.userRepository.save(newUser);
              return InfoUserTokenDTO.builder()
@@ -69,13 +70,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseUserDTO sigIn (final UserDTO userRequest){
         try {
-            Optional<User> optionalUser =  this.userRepository.findUserByEmailAndIsActive(userRequest.getEmail(),true);
-            User userSearch = optionalUser.orElseThrow(()-> new ValidationsException("Error to Find the User","No cumple",HttpStatus.NOT_ACCEPTABLE) );
-           String decrypt = decyptPwd(CustomConstants.SEED_ENCRYPTION,userSearch.getPassword());
+            User userSearch =  this.userRepository.findUserByEmailAndIsActive(userRequest.getEmail(),true)
+                    .orElseThrow(()-> new ValidationsException("Error to Find the User","No cumple",HttpStatus.NOT_ACCEPTABLE));
+           String decrypt = JasyptUtil.decyptPwd(CustomConstants.SEED_ENCRYPTION,userSearch.getPassword());
             if ((userRequest.getPassword()).equals(decrypt)) {
                userSearch.setLastLogin(new Timestamp(System.currentTimeMillis()));
                userSearch.setToken(jwtRepository.create(userRequest.getEmail()));
-               User userResponse = this.userRepository.save(userSearch);
+               User userResponse =  userRepository.save(userSearch);
                return orikaMapper.map(userResponse, ResponseUserDTO.class);
            }else{
                throw new ValidationsException("Password is Inscorrect","No cumple",HttpStatus.NOT_ACCEPTABLE);

@@ -11,14 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SecurityUtilsTest extends  AbstractRestControllerTest{
+ class SecurityUtilsTest extends  AbstractRestControllerTest{
     @Before("")
     public void setUp() {
         SecurityContextHolder.clearContext();
     }
     
     @Test
-    public void getCurrentUsername() {
+     void getCurrentUsername() {
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "admin"));
         SecurityContextHolder.setContext(securityContext);
@@ -29,10 +29,10 @@ public class SecurityUtilsTest extends  AbstractRestControllerTest{
     }
 
     @Test
-    public void getActualUserForUserWithoutToken() throws Exception {
+     void getActualUserForUserWithoutToken() throws Exception {
         getMockMvc().perform(get("/api/user/login")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
 }

@@ -8,6 +8,8 @@ import org.jasypt.encryption.pbe.config.SimpleStringPBEConfig;
 public class JasyptUtil {
 
 
+    private JasyptUtil() {
+    }
 
     public static String encyptPwd(String password, String value){
             PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();

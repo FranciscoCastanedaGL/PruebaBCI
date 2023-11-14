@@ -6,6 +6,8 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Data
 @Entity
@@ -21,5 +23,9 @@ public class Phone {
     private Long number;
     private int cityCode;
     private String countryCode;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
 }

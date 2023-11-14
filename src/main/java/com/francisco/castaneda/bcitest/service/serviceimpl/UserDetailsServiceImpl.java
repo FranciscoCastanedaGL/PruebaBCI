@@ -1,4 +1,4 @@
-package com.francisco.castaneda.bcitest.service.serviceImpl;
+package com.francisco.castaneda.bcitest.service.serviceimpl;
 
 import com.francisco.castaneda.bcitest.repository.UserRepository;
 import com.francisco.castaneda.bcitest.model.entity.User;

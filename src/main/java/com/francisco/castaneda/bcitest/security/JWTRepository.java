@@ -2,11 +2,12 @@ package com.francisco.castaneda.bcitest.security;
 
 
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
-import com.francisco.castaneda.bcitest.service.serviceImpl.UserDetailsServiceImpl;
+import com.francisco.castaneda.bcitest.service.serviceimpl.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,8 +22,9 @@ import java.util.List;
 
 @Component
 public class JWTRepository {
+    @Getter
     public static final JWTRepository instance = new JWTRepository();
-    private List<String> tokens = new ArrayList<>();
+    private final List<String> tokens = new ArrayList<>();
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -30,17 +32,10 @@ public class JWTRepository {
     private JWTRepository() {
     }
 
-    public static JWTRepository getInstance() {
-        return instance;
-    }
-
     public void addToken(String token) {
         this.tokens.add(token);
     }
 
-    public void removeToken(String token) {
-        this.tokens.remove(token);
-    }
 
     public String create(String username ) {
 

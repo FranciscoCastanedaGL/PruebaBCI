@@ -2,12 +2,18 @@ package com.francisco.castaneda.bcitest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.francisco.castaneda.bcitest.model.entity.Phone;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ResponseUserDTO {
     private String id;
     private Date created;

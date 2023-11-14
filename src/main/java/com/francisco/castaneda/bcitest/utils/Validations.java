@@ -4,7 +4,10 @@ import com.francisco.castaneda.bcitest.model.constants.CustomConstants;
 
 public class Validations {
 
-    public static boolean paswordValidation (String pass) {
+    private Validations() {
+    }
+
+    public static boolean passwordValidation(String pass) {
         return pass.matches(CustomConstants.REG_EXP_FOR_PASSWORD);
     }
 

@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     private UserRepository userRepository;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {

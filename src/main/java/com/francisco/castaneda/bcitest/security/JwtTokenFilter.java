@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
-    private JWTRepository jwtTokenProvider;
+    private final JWTRepository jwtTokenProvider;
 
     public JwtTokenFilter(JWTRepository jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -30,7 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.clearContext();
             httpServletResponse.sendError(ex.getStatus().value(), ex.getMessage());
             return;
-        }
+         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
