@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -113,7 +114,7 @@ class UserServiceImplTest {
 
         User userInDatabase = new User();
         userInDatabase.setEmail("valid@example.com");
-        userInDatabase.setPassword("fnkyi0Dc2H6Epw8hGFWd9b1tbckFslTEzqpDAiDLokCTFcs0cp15RZZHqTy8BuRY");
+        userInDatabase.setPassword("$2a$10$zv5EJvlwwTVtFbAakwXiZuEeyqe.uK59Uk5BWazprHSimI5rF9e.S");
         userInDatabase.setIsActive(true);
 
         ResponseUserDTO response = ResponseUserDTO.builder()
@@ -126,6 +127,7 @@ class UserServiceImplTest {
 
         when(userRepository.findUserByEmailAndIsActive(eq("valid@example.com"), eq(true)))
                 .thenReturn(Optional.of(userInDatabase));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
         when(jwtRepository.create(eq("valid@example.com"))).thenReturn("mockedToken");
 
