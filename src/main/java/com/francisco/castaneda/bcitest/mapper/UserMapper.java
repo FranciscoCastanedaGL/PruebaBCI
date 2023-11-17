@@ -14,7 +14,6 @@ public class UserMapper implements OrikaMapperFactoryConfigurer {
 
     @Override
     public void configure(MapperFactory orikaMapperFactory) {
-        MapperFacade mapperFacade = orikaMapperFactory.getMapperFacade();
         orikaMapperFactory.classMap(User.class, ResponseUserDTO.class)
 
                 .field("id","id")

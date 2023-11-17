@@ -2,12 +2,13 @@ plugins {
 	id 'org.springframework.boot' version '2.5.14'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'org.jetbrains.kotlin.jvm' version '1.5.30'
+	id 'groovy'
+	id 'jacoco'
 }
 
-group = 'com.francisco.castanieda'
+group = 'com.francisco.castaneda'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 dependencyManagement {
 	imports {
@@ -17,8 +18,12 @@ dependencyManagement {
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
-	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 dependencies {
@@ -27,23 +32,30 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	//implementation 'com.auth0:java-jwt:3.18.2'
-	implementation 'org.springframework.boot:spring-boot-starter'
+	//implementation 'org.springframework.boot:spring-boot-starter'
 	implementation "net.rakugakibox.spring.boot:orika-spring-boot-starter:1.8.0"
-	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
+	//implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
 	implementation "com.h2database:h2"
-    implementation 'io.openliberty.features:beanValidation-2.0:21.0.0.12'
+    //implementation 'io.openliberty.features:beanValidation-2.0:21.0.0.12'
     implementation 'junit:junit:4.13.1'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'com.google.code.gson:gson:2.8.9'
+	//testImplementation 'com.google.code.gson:gson:2.8.9'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.mockito:mockito-core:3.11.2'
-	testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
-	implementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner:3.1.3'
-	implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-	implementation "org.springframework.boot:spring-boot-devtools"
+	testImplementation ('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+	testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.2'
+	//implementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner:3.1.3'
+	//implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+	//implementation "org.springframework.boot:spring-boot-devtools"
 	implementation group: 'org.jasypt', name: 'jasypt', version: '1.9.3'
+	implementation 'org.modelmapper:modelmapper:2.4.4'
+	testImplementation 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
 
 test {
