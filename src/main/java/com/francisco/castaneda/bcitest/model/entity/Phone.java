@@ -9,12 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Data
 @Entity
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 public class Phone {
     @Id
     @GeneratedValue
@@ -23,9 +23,5 @@ public class Phone {
     private Long number;
     private int cityCode;
     private String countryCode;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
 
 }

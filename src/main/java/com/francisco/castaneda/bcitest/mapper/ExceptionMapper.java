@@ -2,21 +2,19 @@ package com.francisco.castaneda.bcitest.mapper;
 
 import com.francisco.castaneda.bcitest.exceptions.CustomException;
 import com.francisco.castaneda.bcitest.model.dto.ErrorInfoDTO;
-import ma.glasnost.orika.MapperFactory;
-import net.rakugakibox.spring.boot.orika.OrikaMapperFactoryConfigurer;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExceptionMapper implements OrikaMapperFactoryConfigurer {
+public class ExceptionMapper {
 
+    private final ModelMapper modelMapper;
 
+    public ExceptionMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
-    @Override
-    public void configure(MapperFactory orikaMapperFactory) {
-        orikaMapperFactory.classMap(ErrorInfoDTO.class, CustomException.class)
-                .field("timestamp","timestamp")
-                .field("message","message")
-                .byDefault()
-                .register();
+    public ErrorInfoDTO mapToErrorInfoDTO(CustomException ex, Class<ErrorInfoDTO> errorInfoDTOClass) {
+        return modelMapper.map(ex, errorInfoDTOClass);
     }
 }

@@ -1,37 +1,27 @@
 package com.francisco.castaneda.bcitest.mapper;
 
 
-
-import com.francisco.castaneda.bcitest.model.entity.User;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import net.rakugakibox.spring.boot.orika.OrikaMapperFactoryConfigurer;
+import com.francisco.castaneda.bcitest.model.dto.UserDTO;
+import com.francisco.castaneda.bcitest.model.entity.User;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper implements OrikaMapperFactoryConfigurer {
+public class UserMapper {
 
-    @Override
-    public void configure(MapperFactory orikaMapperFactory) {
-        orikaMapperFactory.classMap(User.class, ResponseUserDTO.class)
-
-                .field("id","id")
-                .field("name","name")
-                .field("password","password")
-                .field("email","email")
-                .field("token","token")
-                .field("isActive","isActive")
-                .field("lastLogin","lastLogin")
-                .field("created","created")
-                .field("isAdmin","isAdmin")
-                .field("phones{number}","phones{number}")
-                .field("phones{cityCode}","phones{cityCode}")
-                .field("phones{countryCode}","phones{countryCode}")
-                .byDefault()
-                .register();
+  private final ModelMapper modelMapper;
+    public UserMapper(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
     }
 
+    public ResponseUserDTO mapUserToResponseUserDTO(User user) {
+        return modelMapper.map(user, ResponseUserDTO.class);
+    }
+
+    public User mapResponseUserDTOToUser(UserDTO userDTO) {
+        return modelMapper.map(userDTO, User.class);
+    }
 
 
 }

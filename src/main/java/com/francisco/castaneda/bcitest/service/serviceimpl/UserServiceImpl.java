@@ -2,6 +2,7 @@ package com.francisco.castaneda.bcitest.service.serviceimpl;
 
 import com.francisco.castaneda.bcitest.exceptions.CustomException;
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
+import com.francisco.castaneda.bcitest.mapper.UserMapper;
 import com.francisco.castaneda.bcitest.model.constants.CustomConstants;
 import com.francisco.castaneda.bcitest.model.dto.InfoUserTokenDTO;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
@@ -11,20 +12,18 @@ import com.francisco.castaneda.bcitest.repository.UserRepository;
 import com.francisco.castaneda.bcitest.security.JWTRepository;
 import com.francisco.castaneda.bcitest.security.SecurityConstants;
 import com.francisco.castaneda.bcitest.service.UserService;
-import com.francisco.castaneda.bcitest.utils.JasyptUtil;
 import com.francisco.castaneda.bcitest.utils.Validations;
 import lombok.RequiredArgsConstructor;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Objects;
 
-import static com.francisco.castaneda.bcitest.utils.JasyptUtil.encyptPwd;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private  final JWTRepository jwtRepository;
-    private final MapperFacade orikaMapper;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public InfoUserTokenDTO createUser(User newUser) throws CustomException {
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         newUser.setId(uuid);
-        newUser.setPassword(encyptPwd(CustomConstants.SEED_ENCRYPTION,newUser.getPassword()));
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setIsActive(true);
         newUser.setToken(SecurityConstants.TOKEN_PREFIX.concat(jwt));
         newUser.setIsAdmin(auth.isAuthenticated());
@@ -72,12 +72,11 @@ public class UserServiceImpl implements UserService {
         try {
             User userSearch =  this.userRepository.findUserByEmailAndIsActive(userRequest.getEmail(),true)
                     .orElseThrow(()-> new ValidationsException("Error to Find the User","No cumple",HttpStatus.NOT_ACCEPTABLE));
-           String decrypt = JasyptUtil.decyptPwd(CustomConstants.SEED_ENCRYPTION,userSearch.getPassword());
-            if ((userRequest.getPassword()).equals(decrypt)) {
+            if (passwordEncoder.matches(userRequest.getPassword(), userSearch.getPassword())) {
                userSearch.setLastLogin(new Timestamp(System.currentTimeMillis()));
                userSearch.setToken(jwtRepository.create(userRequest.getEmail()));
                User userResponse =  userRepository.save(userSearch);
-               return orikaMapper.map(userResponse, ResponseUserDTO.class);
+               return userMapper.mapUserToResponseUserDTO(userResponse);
            }else{
                throw new ValidationsException("Password is Inscorrect","No cumple",HttpStatus.NOT_ACCEPTABLE);
            }

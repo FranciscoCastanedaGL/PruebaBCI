@@ -6,13 +6,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
-@Data
 @Entity
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 public class User {
     @Id
     @Column(name = "user_id")
@@ -26,10 +27,9 @@ public class User {
     private Timestamp created;
     @JsonIgnore
     private Boolean isAdmin ;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private List<Phone> phones;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    Set<Phone> phones;
 
     public User (String username, String password) {
         this.email = username;
@@ -41,7 +41,5 @@ public class User {
         this.password = null;
         this.isAdmin = null;
     }
-
-
 
 }

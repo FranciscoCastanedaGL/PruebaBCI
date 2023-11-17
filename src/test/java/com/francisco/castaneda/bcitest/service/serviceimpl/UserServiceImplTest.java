@@ -1,14 +1,13 @@
 package com.francisco.castaneda.bcitest.service.serviceimpl;
 
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
+import com.francisco.castaneda.bcitest.mapper.UserMapper;
 import com.francisco.castaneda.bcitest.model.dto.InfoUserTokenDTO;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
 import com.francisco.castaneda.bcitest.model.dto.UserDTO;
 import com.francisco.castaneda.bcitest.model.entity.User;
 import com.francisco.castaneda.bcitest.repository.UserRepository;
 import com.francisco.castaneda.bcitest.security.JWTRepository;
-import com.francisco.castaneda.bcitest.utils.JasyptUtil;
-import ma.glasnost.orika.MapperFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +47,7 @@ class UserServiceImplTest {
     JWTRepository jwtRepository;
 
     @Mock
-    MapperFacade orikaMapper;
+    UserMapper userMapper;
 
     @BeforeEach
     void setUp() {
@@ -132,7 +131,7 @@ class UserServiceImplTest {
 
 
         when(userRepository.save(any(User.class))).thenReturn(userInDatabase);
-        when(orikaMapper.map(any(User.class), eq(ResponseUserDTO.class)))
+        when(userMapper.mapUserToResponseUserDTO(any(User.class)))
                 .thenReturn(response);
 
         ResponseUserDTO responseUserDTO = userService.sigIn(userRequest);

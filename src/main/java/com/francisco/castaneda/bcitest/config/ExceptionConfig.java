@@ -3,8 +3,9 @@ package com.francisco.castaneda.bcitest.config;
 import com.francisco.castaneda.bcitest.exceptions.CustomException;
 import com.francisco.castaneda.bcitest.exceptions.UserNotFoundException;
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
+import com.francisco.castaneda.bcitest.mapper.ExceptionMapper;
 import com.francisco.castaneda.bcitest.model.dto.ErrorInfoDTO;
-import ma.glasnost.orika.MapperFacade;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -18,10 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
+@AllArgsConstructor
 public class ExceptionConfig {
-    @Autowired
-    private MapperFacade orikaMapper;
+
+    private final ExceptionMapper exceptionMapper;
 
     @Bean
     public ErrorAttributes errorAttributes() {
@@ -41,7 +43,7 @@ public class ExceptionConfig {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorInfoDTO methodArgumentNotValidException(CustomException ex) {
-        ErrorInfoDTO newErrorInfo = orikaMapper.map(ex,ErrorInfoDTO.class );
+        ErrorInfoDTO newErrorInfo = exceptionMapper.mapToErrorInfoDTO(ex,ErrorInfoDTO.class );
         newErrorInfo.setCode(ex.getStatus().value());
         return newErrorInfo;
     }
@@ -50,7 +52,7 @@ public class ExceptionConfig {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorInfoDTO methodArgumentNotValidationException(CustomException ex) {
-        ErrorInfoDTO newErrorInfo = orikaMapper.map(ex,ErrorInfoDTO.class );
+        ErrorInfoDTO newErrorInfo = exceptionMapper.mapToErrorInfoDTO(ex,ErrorInfoDTO.class );
         newErrorInfo.setCode(ex.getStatus().value());
         return newErrorInfo;
     }
