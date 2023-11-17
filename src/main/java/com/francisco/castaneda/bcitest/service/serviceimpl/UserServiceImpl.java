@@ -3,7 +3,6 @@ package com.francisco.castaneda.bcitest.service.serviceimpl;
 import com.francisco.castaneda.bcitest.exceptions.CustomException;
 import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
 import com.francisco.castaneda.bcitest.mapper.UserMapper;
-import com.francisco.castaneda.bcitest.model.constants.CustomConstants;
 import com.francisco.castaneda.bcitest.model.dto.InfoUserTokenDTO;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
 import com.francisco.castaneda.bcitest.model.dto.UserDTO;
@@ -12,7 +11,6 @@ import com.francisco.castaneda.bcitest.repository.UserRepository;
 import com.francisco.castaneda.bcitest.security.JWTRepository;
 import com.francisco.castaneda.bcitest.security.SecurityConstants;
 import com.francisco.castaneda.bcitest.service.UserService;
-import com.francisco.castaneda.bcitest.utils.Validations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -37,10 +35,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public InfoUserTokenDTO createUser(User newUser) throws CustomException {
 
-        if (!Validations.emailValidation(newUser.getEmail())){
-              throw new ValidationsException("The email cannot be validated.","No cumple",HttpStatus.NOT_ACCEPTABLE);}
-        if(!Validations.passwordValidation(newUser.getPassword())){
-            throw new ValidationsException("The password does not meet the acceptance standards.","No cumple",HttpStatus.NOT_ACCEPTABLE);}
         //Se asigna el UUID
         String uuid = java.util.UUID.randomUUID().toString();
         //Se crea el token
@@ -48,7 +42,7 @@ public class UserServiceImpl implements UserService {
         //se obtiene la autenticación
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        newUser.setId(uuid);
+        newUser.setUuID(uuid);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setIsActive(true);
         newUser.setToken(SecurityConstants.TOKEN_PREFIX.concat(jwt));

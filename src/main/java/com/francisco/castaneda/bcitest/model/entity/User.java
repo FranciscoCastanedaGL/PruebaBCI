@@ -5,7 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,7 +16,7 @@ import java.util.Set;
 public class User {
     @Id
     @Column(name = "user_id")
-    private String id;
+    private String uuID;
     private String name;
     private String email;
     private String password;
