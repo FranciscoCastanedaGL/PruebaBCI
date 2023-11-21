@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         newUser.setIsAdmin(auth.isAuthenticated());
         newUser.setCreated(new Timestamp(System.currentTimeMillis()));
         User optionalUser =  this.userRepository.findUserByEmailAndIsActive(newUser.getEmail(),newUser.getIsActive()).orElse(null);
-        //Se valida si existe el mail
+
          if (Objects.isNull(optionalUser)){
             this.userRepository.save(newUser);
              return InfoUserTokenDTO.builder()
