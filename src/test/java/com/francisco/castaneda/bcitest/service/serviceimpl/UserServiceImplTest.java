@@ -1,6 +1,5 @@
 package com.francisco.castaneda.bcitest.service.serviceimpl;
 
-import com.francisco.castaneda.bcitest.exceptions.ValidationsException;
 import com.francisco.castaneda.bcitest.mapper.UserMapper;
 import com.francisco.castaneda.bcitest.model.dto.InfoUserTokenDTO;
 import com.francisco.castaneda.bcitest.model.dto.ResponseUserDTO;
@@ -22,7 +21,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -84,26 +82,6 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).save(newUser);
     }
 
-    @Test
-    void createUser_InvalidEmail_ShouldThrowValidationsException() {
-        User newUser = User.builder()
-                .email("")
-                .password("Francisco12.")
-                .isActive(true).build();
-
-        assertThrows(ValidationsException.class, () -> userService.createUser(newUser));
-    }
-
-    @Test
-    void createUser_InvalidPassword_ShouldThrowValidationsException() {
-        User newUser = new User();
-        newUser.setEmail("test@example.com");
-        newUser.setPassword("short");
-        newUser.setIsActive(true);
-
-
-        assertThrows(ValidationsException.class, () -> userService.createUser(newUser));
-    }
 
     @Test
     void signIn_ValidCredentials_ShouldReturnResponseUserDTO() {

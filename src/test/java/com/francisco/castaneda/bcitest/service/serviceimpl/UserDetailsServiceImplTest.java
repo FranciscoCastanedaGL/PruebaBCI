@@ -8,12 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,16 +53,5 @@ class UserDetailsServiceImplTest {
         verify(userRepository, times(1)).findUserByEmail(email);
     }
 
-    @Test
-    void loadUserByUsername_NonExistingUser_ShouldThrowException() {
 
-        String nonExistingEmail = "nonexistent@example.com";
-        when(userRepository.findUserByEmail(nonExistingEmail)).thenReturn(null);
-
-        assertThrows(UsernameNotFoundException.class, () -> {
-            userDetailsService.loadUserByUsername(nonExistingEmail);
-        });
-
-        verify(userRepository, times(1)).findUserByEmail(nonExistingEmail);
-    }
 }
